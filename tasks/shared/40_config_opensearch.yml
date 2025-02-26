@@ -1,0 +1,14 @@
+- name: Update opensearch.yml with required settings
+  blockinfile:
+    path: /etc/opensearch/opensearch.yml
+    block: |
+      network.host: 127.0.0.1
+      plugins.security.disabled: true
+    create: yes
+
+- name: Restart OpenSearch service
+  systemd:
+    name: opensearch
+    state: restarted
+    enabled: yes
+

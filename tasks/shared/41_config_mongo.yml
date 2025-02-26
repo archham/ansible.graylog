@@ -1,0 +1,12 @@
+- name: Add configuration to disable diagnostic data collection
+  blockinfile:
+    path: /etc/mongod.conf
+    block: |
+      setParameter:
+        diagnosticDataCollectionEnabled: false
+
+- name: Restart MongoDB to apply the new configuration
+  systemd:
+    name: mongod
+    state: restarted
+    enabled: yes

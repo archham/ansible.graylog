@@ -1,0 +1,12 @@
+
+# 2024-06-17 13:01:57.022731
++i would like to optimize my handler calls to just restart service at the end of this playbooks with handlers but only if config file has changed
+
+# 2024-06-17 13:02:40.912022
++/run ansible-playbook test/test.yml
+
+# 2024-06-17 13:02:59.133095
++/run ls test*
+
+# 2024-06-17 13:03:16.956078
++/run ansible-playbook tests/test.yml

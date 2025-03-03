@@ -4,6 +4,7 @@
     block: |
       network.host: 127.0.0.1
       plugins.security.disabled: true
+      cluster.default_number_of_replicas: 0
     create: yes
 
 - name: Restart OpenSearch service

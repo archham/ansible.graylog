@@ -34,4 +34,3 @@
   shell: /usr/local/sbin/create-cert.sh
   changed_when: false
 
-    

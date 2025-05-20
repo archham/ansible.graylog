@@ -9,8 +9,8 @@ graylog_transport_email_web_interface_url: "https://{{ graylog_hostname }}"
 
 # Packages
 graylog_packages:
+- graylog-datanode
 - graylog-server
-- opensearch
 - mongodb-org
 - policycoreutils-python-utils
 

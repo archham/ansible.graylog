@@ -3,7 +3,6 @@
 
 # --- GENERAL CONFIG ---
 graylog_min_memory: 4
-elasticsearch_min_memory: 8
 mongodb_min_memory: 4
 graylog_hostname: "{{ ansible_fqdn }}"
 graylog_root_email: "graylogadmin@example.com"
@@ -12,10 +11,8 @@ graylog_root_timezone: "Europe/Zurich"
 graylog_allow_highlighting: true
 graylog_dashboard_widget_default_cache_time: 60s
 graylog_cluster_name: "graylog"
-graylog_elasticsearch_hosts: "http://127.0.0.1:9200"
 graylog_mongodb_uri: "mongodb://localhost/{{ graylog_cluster_name }}"
 graylog_http_bind_address: '127.0.0.1:9000'
-graylog_elasticsearch_shards: 1
 graylog_is_master: true
 
 # nginx rp vars
@@ -47,7 +44,6 @@ graylog_transport_email_subject_prefix: "[graylog]"
 graylog_transport_email_from_email: "graylog@example.com"
 
 # rpm repository release version
-graylog_version: "6.1"
+graylog_version: "6.2"
 mongodb_version: "7.0"
-opensearch_version: "2.x"
 ...

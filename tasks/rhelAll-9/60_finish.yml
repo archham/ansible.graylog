@@ -1,0 +1,14 @@
+---
+- name: prepare finish message
+  shell: |
+    echo "Setup finished, now use this link to generate certificates:"
+    grep admin: /var/log/graylog-server/server.log  | sed "s/.*admin:\(.*\)@.*/https:\/\/admin:\1@$(hostname -f)/"
+    echo
+    echo "Then use following credentials to login your brand new single node graylog:"
+    echo "Username: admin"
+    echo "Password: {{ graylog_admin_password }}"
+  register: finish
+- name: print finishing message
+  debug:
+    var: finish.stdout_lines
+

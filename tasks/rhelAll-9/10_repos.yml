@@ -1,0 +1,18 @@
+---
+- name: Install Graylog Repositry
+  dnf:
+    name: "{{ graylog_repo_graylog_rpm }}"
+    disable_gpg_check: true
+
+- name: Add MongoDB repository file
+  copy:
+    dest: /etc/yum.repos.d/mongodb-org.repo
+    content: |
+      [mongodb-org-{{ mongodb_version }}]
+      name=MongoDB Repository
+      baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/{{ mongodb_version }}/x86_64/
+      gpgcheck=1
+      enabled=1
+      gpgkey=https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc
+
+...

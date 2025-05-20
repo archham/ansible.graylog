@@ -3,8 +3,8 @@ galaxy_info:
   author: Chris Ruettimann
   company: Bitbull Community
   role_name: graylog
-  description: installation and configuration of graylog
-  min_ansible_version: 2.18
+  description: installation and configuration of graylog single node
+  min_ansible_version: 2.17
   license: GPLv3
   platforms:
   - name: EL
@@ -12,7 +12,6 @@ galaxy_info:
     - 9
   galaxy_tags: 
   - graylog
-  - elasticsearch
   - mongodb
   - syslog
 # We don't use dependencies in here anymore, look into the ```roles/requirements.yml```

@@ -1,9 +1,8 @@
 ---
 # tasks file for joe-speedboat.nginx-rp
 - name: install nginx packages
-  yum:
+  dnf:
     name: '{{ item }}'
-    state: present
   with_items: '{{ nginx_packages_EL }}'
 
 - name: create /etc/nginx/nginx.conf

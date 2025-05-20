@@ -13,12 +13,19 @@
   register: graylog_password_secret_length
   changed_when: false
 
+- name: Create random password_secret, just in case we need to change
+  set_fact:
+    graylog_password_secret: "{{ lookup('password', '/dev/null length=96 chars=ascii_letters') }}"
+
 - name: Configure Graylog password salt
   lineinfile:
-    path: /etc/graylog/server/server.conf
+    path: "{{ item }}"
     regexp: '^password_secret'
-    line: password_secret = {{ lookup('password', '/dev/null length=96 chars=ascii_letters') }}
+    line: password_secret = {{ graylog_password_secret }}
   changed_when: false
+  with_items:
+    - /etc/graylog/server/server.conf
+    - /etc/graylog/datanode/datanode.conf
   when: graylog_password_secret_length.stdout|int < 80
 
 ### graylog config settings
@@ -134,32 +141,6 @@
     regexp: '^dashboard_widget_default_cache_time'
     line: 'dashboard_widget_default_cache_time = {{ graylog_dashboard_widget_default_cache_time }}'
 
-### mongodb
-- name: Configure Graylog mongodb_uri
-  lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^mongodb_uri'
-    line: "mongodb_uri = {{ graylog_mongodb_uri }}"
-
-### elasticsearch
-- name: enable elasticsearch shrads
-  lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^elasticsearch_shards'
-    line: 'elasticsearch_shards = {{ graylog_elasticsearch_shards }}'
-
-- name: set graylog elasticsearch cluster name
-  lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^elasticsearch_cluster_name'
-    line: 'elasticsearch_cluster_name = {{ graylog_cluster_name }}'
-
-- name: Configure Graylog elasticsearch_hosts
-  lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^elasticsearch_hosts'
-    line: "elasticsearch_hosts = {{ graylog_elasticsearch_hosts }}"
-
 ### graylog cluster master
 - name: Configure Graylog Cluster Master/Slave
   lineinfile:
@@ -228,13 +209,6 @@
 
 - name: Calculate memory settings
   set_fact:
-    elasticsearch_heap_size: >-
-      {{ 
-        ((total_ram_mb | int / 2) > (elasticsearch_min_memory | int * 1024)) | ternary(
-          (total_ram_mb | int / 2), 
-          (elasticsearch_min_memory | int * 1024)
-        ) | int 
-      }}
     mongodb_memory: >-
       {{ 
         ((total_ram_mb | int / 4) > (mongodb_min_memory | int * 1024)) | ternary(
@@ -251,24 +225,6 @@
     create: yes
   notify:
     - restart graylog
-
-- name: Ensure Elasticsearch minimum heap size is set
-  lineinfile:
-    path: /etc/elasticsearch/jvm.options
-    regexp: '^-Xms'
-    line: "-Xms{{ elasticsearch_heap_size }}m"
-    create: yes
-  notify:
-    - restart elasticsearch
-
-- name: Ensure Elasticsearch maximum heap size is set
-  lineinfile:
-    path: /etc/elasticsearch/jvm.options
-    regexp: '^-Xmx'
-    line: "-Xmx{{ elasticsearch_heap_size }}m"
-    create: yes
-  notify:
-    - restart elasticsearch
 
 - name: Ensure MongoDB memory setting is configured
   blockinfile:
@@ -289,15 +245,15 @@
     enabled: yes
     state: restarted
 
-- name: Enable and restart Opensearch
-  service:
-    name: opensearch
-    enabled: yes
-    state: restarted
-
 - name: Enable and restart Graylog Server
   service:
     name: graylog-server
+    enabled: yes
+    state: restarted
+
+- name: Enable and restart Graylog Data Node
+  service:
+    name: graylog-datanode
     enabled: yes
     state: restarted
 

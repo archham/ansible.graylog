@@ -9,12 +9,12 @@ ansible-galaxy install joe-speedboat.graylog
 ## Requirements xxx
 
 * Currently tested with Rocky Linux 9
-* Ansible 2.18 or higher is required for this Ansible Role
+* Ansible 2.17 or higher is required for this Ansible Role
 
 * Operating System: Rocky Linux 9
 * OS Disk: min 50GB
-* CPU: min 4   
-* Memory: min 6GB   
+* CPU: min 6   
+* Memory: min 8GB   
 
 
 

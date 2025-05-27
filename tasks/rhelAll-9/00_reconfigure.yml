@@ -1,0 +1,13 @@
+---
+- name: Gather package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: reconfigure graylog if needed
+  fail:
+    msg:
+      - "ERROR: Found graylog installation"
+      - "This role is writte for setting up graylog, not for reconfiguring"
+      - "If you want to force a reconfiguration, set reconfigure_graylog: True"
+  when: not reconfigure_graylog and ('graylog-server' in ansible_facts.packages)
+

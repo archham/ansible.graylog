@@ -1,4 +1,7 @@
 # graylog
+This is my personal role to setup a Graylog single node for testing and debugging.
+It is not a starting pint for production env, but for evaluation.
+
 
 Installation with ansible-galaxy:
 
@@ -22,7 +25,6 @@ Role Variables
 --------------
 
 Variables are speaking or documented in defaults/main.yml   
-
 
 
 License

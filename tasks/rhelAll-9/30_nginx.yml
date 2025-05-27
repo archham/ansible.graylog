@@ -3,7 +3,7 @@
 - name: install nginx packages
   dnf:
     name: '{{ item }}'
-  with_items: '{{ nginx_packages_EL }}'
+  with_items: '{{ nginx_packages }}'
 
 - name: create /etc/nginx/nginx.conf
   copy:

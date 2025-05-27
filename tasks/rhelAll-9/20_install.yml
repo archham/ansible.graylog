@@ -1,8 +1,5 @@
 ---
-
 - name: Install graylog packages
   dnf:
     name: "{{ graylog_packages }}"
-    state: installed
-
 ...

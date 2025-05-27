@@ -1,6 +1,9 @@
 ---
 # joe-speedboat.graylog/defaults/main.yml
 
+# apply role even if graylog exist
+reconfigure_graylog: False
+
 # --- GENERAL CONFIG ---
 graylog_min_memory: 4
 mongodb_min_memory: 4

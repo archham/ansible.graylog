@@ -1,3 +1,4 @@
+---
 - name: Add configuration to disable diagnostic data collection
   blockinfile:
     path: /etc/mongod.conf
@@ -10,3 +11,4 @@
     name: mongod
     state: restarted
     enabled: yes
+...

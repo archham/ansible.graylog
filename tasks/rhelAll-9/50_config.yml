@@ -17,6 +17,7 @@
   set_fact:
     graylog_password_secret: "{{ lookup('password', '/dev/null length=96 chars=ascii_letters') }}"
 
+### Global values for server.conf and datanode.conf
 - name: Configure Graylog password salt
   lineinfile:
     path: "{{ item }}"
@@ -28,12 +29,25 @@
     - /etc/graylog/datanode/datanode.conf
   when: graylog_password_secret_length.stdout|int < 80
 
+- name: Configure mongodb_uri
+  lineinfile:
+    path: "{{ item }}"
+    regexp: '^mongodb_uri'
+    line: mongodb_uri = {{ graylog_mongodb_uri }}
+  changed_when: false
+  with_items:
+    - /etc/graylog/server/server.conf
+    - /etc/graylog/datanode/datanode.conf
+
+
 ### graylog config settings
 - name: Set Graylog web listen uri
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^http_bind_address'
     line: 'http_bind_address = {{ graylog_http_bind_address }}'
+  notify:
+  - restart graylog-server
 
 - name: Set Graylog Timezone
   lineinfile:
@@ -50,96 +64,128 @@
     path: /etc/graylog/server/server.conf
     regexp: '^root_email'
     line: 'root_email = {{ graylog_root_email }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog root email
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^root_email'
     line: 'root_email = {{ graylog_root_email }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog http_enable_gzip
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^http_enable_gzip'
     line: 'http_enable_gzip = true'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog allow_highlighting
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^allow_highlighting'
     line: 'allow_highlighting = {{ graylog_allow_highlighting }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_enabled
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_enabled'
     line: 'transport_email_enabled = {{ graylog_transport_email_enabled }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_hostname
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_hostname'
     line: 'transport_email_hostname = {{ graylog_transport_email_hostname }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_port
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_port'
     line: 'transport_email_port = {{ graylog_transport_email_port }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_use_auth
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_auth'
     line: 'transport_email_use_auth = {{ graylog_transport_email_use_auth }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_use_tls
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_tls'
     line: 'transport_email_use_tls = {{ graylog_transport_email_use_tls }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_use_ssl
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_ssl'
     line: 'transport_email_use_ssl = {{ graylog_transport_email_use_ssl }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_auth_username
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_auth_username'
     line: 'transport_email_auth_username = {{ graylog_transport_email_auth_username }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_auth_password
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_auth_password'
     line: 'transport_email_auth_password = {{ graylog_transport_email_auth_password }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_subject_prefix
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_subject_prefix'
     line: 'transport_email_subject_prefix = {{ graylog_transport_email_subject_prefix }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_from_email
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_from_email'
     line: 'transport_email_from_email = {{ graylog_transport_email_from_email }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog transport_email_web_interface_url
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_web_interface_url'
     line: 'transport_email_web_interface_url = {{ graylog_transport_email_web_interface_url }}'
+  notify:
+  - restart graylog-server
 
 - name: Configure Graylog dashboard_widget_default_cache_time
   lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^dashboard_widget_default_cache_time'
     line: 'dashboard_widget_default_cache_time = {{ graylog_dashboard_widget_default_cache_time }}'
+  notify:
+  - restart graylog-server
 
 ### graylog cluster master
 - name: Configure Graylog Cluster Master/Slave
@@ -147,19 +193,8 @@
     path: /etc/graylog/server/server.conf
     regexp: '^is_master'
     line: "is_master = {{ graylog_is_master }}"
-
-### graylog heap size
-- name: Configure graylog heap-size
-  replace:
-    path: /etc/sysconfig/graylog-server
-    regexp: '-Xms([-0-9]+[kmgtKMGT])'
-    replace: "-Xms{{ graylog_jvm_graylog_heap }} "
-
-- name: Configure graylog heap-size
-  replace:
-    path: /etc/sysconfig/graylog-server
-    regexp: '-Xmx([-0-9]+[kmgtKMGT])'
-    replace: "-Xmx{{ graylog_jvm_graylog_heapmax }} "
+  notify:
+  - restart graylog-server
 
 - name: Set vm.max_map_count using sysctl
   sysctl:
@@ -167,12 +202,16 @@
     value: 262144
     state: present
 
-- name: Ensure vm.max_map_count is persisted in /etc/sysctl.conf
+- name: Ensure vm.max_map_count is persisted in /etc/sysctl.d/99-graylog-datanode.conf
   lineinfile:
-    path: /etc/sysctl.conf
+    path: /etc/sysctl.d/99-graylog-datanode.conf
     regexp: '^vm.max_map_count='
     line: 'vm.max_map_count=262144'
     state: present
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Allow the web server to access the network
   seboolean:
@@ -202,29 +241,42 @@
     state: present
 
 ### Configure Memory
-- name: Prepare memory settings
-  set_fact:
-    total_ram_mb: "{{ ansible_memtotal_mb | int }}"
-    graylog_heap_size: "{{ (ansible_memtotal_mb | int) / 2 | int }}"
-
-- name: Calculate memory settings
-  set_fact:
-    mongodb_memory: >-
-      {{ 
-        ((total_ram_mb | int / 4) > (mongodb_min_memory | int * 1024)) | ternary(
-          (total_ram_mb | int / 4), 
-          (mongodb_min_memory | int * 1024)
-        ) | int 
-      }}
-
-- name: Ensure Graylog memory settings are configured
+- name: Set opensearch_heap in datanode.conf
   lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^(GRAYLOG_SERVER_JAVA_OPTS=)'
-    line: "GRAYLOG_SERVER_JAVA_OPTS=\"-Xms{{ graylog_heap_size }}m -Xmx{{ graylog_heap_size }}m\""
-    create: yes
+    path: /etc/graylog/datanode/datanode.conf
+    regexp: '^opensearch_heap'
+    line: 'opensearch_heap = {{graylog_dataserver_memory_gb}}g'
   notify:
-    - restart graylog
+  - restart graylog-datanode
+
+- name: Set -Xms heap size for Graylog Datanode
+  ansible.builtin.lineinfile:
+    path: /etc/graylog/datanode/jvm.options
+    regexp: '^-Xms'
+    line: "-Xms{{ graylog_dataserver_memory_gb }}g"
+    create: true
+    insertafter: EOF
+  become: true
+  notify:
+  - restart graylog-datanode
+
+- name: Set -Xmx heap size for Graylog Datanode
+  ansible.builtin.lineinfile:
+    path: /etc/graylog/datanode/jvm.options
+    regexp: '^-Xmx'
+    line: "-Xmx{{ graylog_dataserver_memory_gb }}g"
+    create: true
+    insertafter: EOF
+  notify:
+  - restart graylog-datanode
+
+- name: Ensure Graylog Server memory settings are configured
+  lineinfile:
+    path: /etc/sysconfig/graylog-server
+    regexp: '^GRAYLOG_SERVER_JAVA_OPTS=.*OmitStackTraceInFastThrow'
+    line: "GRAYLOG_SERVER_JAVA_OPTS=\"-Xms{{ graylog_server_memory_gb }}g -Xmx{{ graylog_server_memory_gb }}g -server -XX:+UseG1GC -XX:-OmitStackTraceInFastThrow\""
+  notify:
+  - restart graylog-server
 
 - name: Ensure MongoDB memory setting is configured
   blockinfile:
@@ -233,33 +285,33 @@
       storage:
         wiredTiger:
           engineConfig:
-            cacheSizeGB: {{ (mongodb_memory | int / 1024) | int }}
+            cacheSizeGB: {{ graylog_mongodb_memory_gb }}
     create: yes
   notify:
-    - restart mongodb
+  - restart mongodb
 
 ### service settings
-- name: Enable and restart mongod
+- name: Enable mongod
   service:
     name: mongod
     enabled: yes
-    state: restarted
+    state: started
 
-- name: Enable and restart Graylog Server
+- name: Enable Graylog Server
   service:
     name: graylog-server
     enabled: yes
-    state: restarted
+    state: started
 
-- name: Enable and restart Graylog Data Node
+- name: Enable Graylog Data Node
   service:
     name: graylog-datanode
     enabled: yes
-    state: restarted
+    state: started
 
-- name: Enable and restart Ngninx Server
+- name: Enable Ngninx Server
   service:
     name: nginx
     enabled: yes
-    state: restarted
+    state: started
 ...

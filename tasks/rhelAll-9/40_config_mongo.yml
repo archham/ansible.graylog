@@ -5,10 +5,6 @@
     block: |
       setParameter:
         diagnosticDataCollectionEnabled: false
-
-- name: Restart MongoDB to apply the new configuration
-  systemd:
-    name: mongod
-    state: restarted
-    enabled: yes
+  notify:
+  - restart mongodb
 ...

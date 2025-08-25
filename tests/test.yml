@@ -1,6 +1,6 @@
 ---
 - name: setup single node
-  hosts: graylog
+  hosts: graylog.domain.tld
   become: True
   gather_facts: True
   pre_tasks:

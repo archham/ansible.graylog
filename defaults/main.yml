@@ -1,12 +1,14 @@
 ---
 # joe-speedboat.graylog/defaults/main.yml
 
+# --- RPM VERSIONs ---
+graylog_version: "6.3"
+mongodb_version: "7.0"
+
 # apply role even if graylog exist
 reconfigure_graylog: False
 
 # --- GENERAL CONFIG ---
-graylog_min_memory: 4
-mongodb_min_memory: 4
 graylog_hostname: "{{ ansible_fqdn }}"
 graylog_root_email: "graylogadmin@example.com"
 graylog_admin_password: "graylog"
@@ -30,10 +32,6 @@ nginx_ssl_cert_ca_chain: "{{ nginx_ssl_cert_host }}_ca_chain.pem"
 nginx_ssl_cert_dhparam: "{{nginx_ssl_cert_host}}_dhparam.pem"
 
 
-# --- JVM HEAP SIZE ---
-graylog_jvm_graylog_heapmax: "{{ (ansible_memtotal_mb/2-1024)|round|int }}m"
-graylog_jvm_graylog_heap: "{{ (ansible_memtotal_mb/2-2048)|round|int }}m"
-
 # --- MAIL CONFIG ---
 graylog_transport_email_enabled: false
 graylog_transport_email_hostname: mail.example.com
@@ -46,7 +44,15 @@ graylog_transport_email_auth_password:  "secret"
 graylog_transport_email_subject_prefix: "[graylog]"
 graylog_transport_email_from_email: "graylog@example.com"
 
-# rpm repository release version
-graylog_version: "6.2"
-mongodb_version: "7.0"
+# --- MEMORY SETTINGS ---
+total_ram_gb: "{{ (ansible_facts['memtotal_mb'] / 1024) | round(0, 'floor') | int }}"
+# OS reserved memory
+reserved_os_gb: 2
+# 50 % for Elastic
+graylog_dataserver_memory_gb: "{{ (total_ram_gb | int / 2 | round(0, 'floor')) | int }}"
+# 2/3 of the rest for graylog server
+graylog_server_memory_gb: "{{ ((total_ram_gb | int - reserved_os_gb | int - graylog_dataserver_memory_gb | int) * 0.6666) | round(0, 'floor') | int }}"
+# rest for mongodb
+graylog_mongodb_memory_gb: "{{ (total_ram_gb | int - reserved_os_gb | int - graylog_dataserver_memory_gb | int - graylog_server_memory_gb | int) | round(0, 'floor') | int }}"
+
 ...

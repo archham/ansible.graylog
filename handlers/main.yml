@@ -1,16 +1,21 @@
 ---
-- name: restart graylog
+- name: restart graylog-server
   service:
     name: graylog-server
     state: restarted
 
-- name: restart elasticsearch
+- name: restart graylog-datanode
   service:
-    name: elasticsearch
+    name: graylog-datanode
     state: restarted
 
 - name: restart mongodb
   service:
     name: mongod
+    state: restarted
+
+- name: restart nginx
+  service:
+    name: nginx
     state: restarted
 ...

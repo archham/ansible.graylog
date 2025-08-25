@@ -12,6 +12,9 @@
     echo "Username: admin"
     echo "Password: {{ graylog_admin_password }}"
     echo 
+    echo "Graylog Server Memory: {{graylog_server_memory_gb}} GB"
+    echo "Graylog Dataserver Memory: {{graylog_dataserver_memory_gb}} GB"
+    echo "Mongodb Memory: {{graylog_mongodb_memory_gb}} GB"
     echo "Remember to fix SELinux rules after initial setup!"
   register: finish
 - name: print finishing message

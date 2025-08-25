@@ -12,6 +12,8 @@
     owner: root
     group: nginx
     mode: 640
+  notify:
+  - restart nginx
 
 - name: create /etc/nginx/conf.d/ssl-offloading.conf
   template:
@@ -20,6 +22,8 @@
     owner: root
     group: nginx
     mode: 0640
+  notify:
+  - restart nginx
 
 - name: create /usr/local/sbin/create-cert.sh
   template:

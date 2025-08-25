@@ -2,24 +2,25 @@
 
 ### graylog admin password
 - name: Configure Graylog admin password if needed
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^root_password_sha2'
     line: root_password_sha2 = {{ graylog_admin_password|hash('sha256')}}
   register: password_change_task
 
 - name: Check if password salt is present (check length)
-  shell: "grep 'password_secret =' /etc/graylog/server/server.conf | tail -1 | wc -c"
+  ansible.builtin.shell:
+    cmd: "grep 'password_secret =' /etc/graylog/server/server.conf | tail -1 | wc -c"
   register: graylog_password_secret_length
   changed_when: false
 
 - name: Create random password_secret, just in case we need to change
-  set_fact:
+  ansible.builtin.set_fact:
     graylog_password_secret: "{{ lookup('password', '/dev/null length=96 chars=ascii_letters') }}"
 
 ### Global values for server.conf and datanode.conf
 - name: Configure Graylog password salt
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ item }}"
     regexp: '^password_secret'
     line: password_secret = {{ graylog_password_secret }}
@@ -30,7 +31,7 @@
   when: graylog_password_secret_length.stdout|int < 80
 
 - name: Configure mongodb_uri
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ item }}"
     regexp: '^mongodb_uri'
     line: mongodb_uri = {{ graylog_mongodb_uri }}
@@ -42,7 +43,7 @@
 
 ### graylog config settings
 - name: Set Graylog web listen uri
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^http_bind_address'
     line: 'http_bind_address = {{ graylog_http_bind_address }}'
@@ -50,7 +51,7 @@
   - restart graylog-server
 
 - name: Set Graylog Timezone
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^root_timezone'
     line: 'root_timezone = {{ graylog_root_timezone }}'
@@ -60,7 +61,7 @@
     name: '{{ graylog_root_timezone }}'
 
 - name: Configure Graylog root email
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^root_email'
     line: 'root_email = {{ graylog_root_email }}'
@@ -68,7 +69,7 @@
   - restart graylog-server
 
 - name: Configure Graylog root email
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^root_email'
     line: 'root_email = {{ graylog_root_email }}'
@@ -76,7 +77,7 @@
   - restart graylog-server
 
 - name: Configure Graylog http_enable_gzip
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^http_enable_gzip'
     line: 'http_enable_gzip = true'
@@ -84,7 +85,7 @@
   - restart graylog-server
 
 - name: Configure Graylog allow_highlighting
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^allow_highlighting'
     line: 'allow_highlighting = {{ graylog_allow_highlighting }}'
@@ -92,7 +93,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_enabled
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_enabled'
     line: 'transport_email_enabled = {{ graylog_transport_email_enabled }}'
@@ -100,7 +101,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_hostname
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_hostname'
     line: 'transport_email_hostname = {{ graylog_transport_email_hostname }}'
@@ -108,7 +109,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_port
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_port'
     line: 'transport_email_port = {{ graylog_transport_email_port }}'
@@ -116,7 +117,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_use_auth
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_auth'
     line: 'transport_email_use_auth = {{ graylog_transport_email_use_auth }}'
@@ -124,7 +125,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_use_tls
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_tls'
     line: 'transport_email_use_tls = {{ graylog_transport_email_use_tls }}'
@@ -132,7 +133,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_use_ssl
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_use_ssl'
     line: 'transport_email_use_ssl = {{ graylog_transport_email_use_ssl }}'
@@ -140,7 +141,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_auth_username
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_auth_username'
     line: 'transport_email_auth_username = {{ graylog_transport_email_auth_username }}'
@@ -148,7 +149,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_auth_password
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_auth_password'
     line: 'transport_email_auth_password = {{ graylog_transport_email_auth_password }}'
@@ -156,7 +157,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_subject_prefix
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_subject_prefix'
     line: 'transport_email_subject_prefix = {{ graylog_transport_email_subject_prefix }}'
@@ -164,7 +165,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_from_email
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_from_email'
     line: 'transport_email_from_email = {{ graylog_transport_email_from_email }}'
@@ -172,7 +173,7 @@
   - restart graylog-server
 
 - name: Configure Graylog transport_email_web_interface_url
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_web_interface_url'
     line: 'transport_email_web_interface_url = {{ graylog_transport_email_web_interface_url }}'
@@ -180,7 +181,7 @@
   - restart graylog-server
 
 - name: Configure Graylog dashboard_widget_default_cache_time
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^dashboard_widget_default_cache_time'
     line: 'dashboard_widget_default_cache_time = {{ graylog_dashboard_widget_default_cache_time }}'
@@ -189,7 +190,7 @@
 
 ### graylog cluster master
 - name: Configure Graylog Cluster Master/Slave
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
     regexp: '^is_master'
     line: "is_master = {{ graylog_is_master }}"
@@ -197,13 +198,13 @@
   - restart graylog-server
 
 - name: Set vm.max_map_count using sysctl
-  sysctl:
+  ansible.posix.sysctl:
     name: vm.max_map_count
     value: 262144
     state: present
 
 - name: Ensure vm.max_map_count is persisted in /etc/sysctl.d/99-graylog-datanode.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/sysctl.d/99-graylog-datanode.conf
     regexp: '^vm.max_map_count='
     line: 'vm.max_map_count=262144'
@@ -214,27 +215,27 @@
     mode: "0644"
 
 - name: Allow the web server to access the network
-  seboolean:
+  ansible.posix.seboolean:
     name: httpd_can_network_connect
     state: true
     persistent: true
 
 - name: Allow Graylog REST API and web interface access on port 9000
-  seport:
+  community.general.seport:
     ports: '9000'
     setype: 'http_port_t'
     proto: 'tcp'
     state: present
 
 - name: Allow Elasticsearch HTTP API access on port 9200
-  seport:
+  community.general.seport:
     ports: '9200'
     setype: 'http_port_t'
     proto: 'tcp'
     state: present
 
 - name: Allow MongoDB access on port 27017
-  seport:
+  community.general.seport:
     ports: '27017'
     setype: 'mongod_port_t'
     proto: 'tcp'
@@ -242,7 +243,7 @@
 
 ### Configure Memory
 - name: Set opensearch_heap in datanode.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/graylog/datanode/datanode.conf
     regexp: '^opensearch_heap'
     line: 'opensearch_heap = {{graylog_dataserver_memory_gb}}g'
@@ -271,7 +272,7 @@
   - restart graylog-datanode
 
 - name: Ensure Graylog Server memory settings are configured
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/sysconfig/graylog-server
     regexp: '^GRAYLOG_SERVER_JAVA_OPTS=.*OmitStackTraceInFastThrow'
     line: "GRAYLOG_SERVER_JAVA_OPTS=\"-Xms{{ graylog_server_memory_gb }}g -Xmx{{ graylog_server_memory_gb }}g -server -XX:+UseG1GC -XX:-OmitStackTraceInFastThrow\""
@@ -279,7 +280,7 @@
   - restart graylog-server
 
 - name: Ensure MongoDB memory setting is configured
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/mongod.conf
     block: |
       storage:
@@ -292,25 +293,25 @@
 
 ### service settings
 - name: Enable mongod
-  service:
+  ansible.builtin.service:
     name: mongod
     enabled: yes
     state: started
 
 - name: Enable Graylog Server
-  service:
+  ansible.builtin.service:
     name: graylog-server
     enabled: yes
     state: started
 
 - name: Enable Graylog Data Node
-  service:
+  ansible.builtin.service:
     name: graylog-datanode
     enabled: yes
     state: started
 
 - name: Enable Ngninx Server
-  service:
+  ansible.builtin.service:
     name: nginx
     enabled: yes
     state: started

@@ -1,11 +1,11 @@
 ---
 - name: Install Graylog Repositry
-  dnf:
+  ansible.builtin.dnf:
     name: "{{ graylog_repo_rpm }}"
     disable_gpg_check: true
 
 - name: Add MongoDB repository file
-  copy:
+  ansible.builtin.copy:
     dest: /etc/yum.repos.d/mongodb-org.repo
     content: |
       [mongodb-org-{{ mongodb_version }}]

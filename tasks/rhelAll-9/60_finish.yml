@@ -1,23 +1,25 @@
 ---
 - name: prepare finish message
-  shell: |
-    for i in $(seq 10)
-    do
-      grep -q admin: /var/log/graylog-server/server.log && break
-      sleep 6
-    done
-    echo "Setup finished, now use this link to generate certificates:"
-    grep admin: /var/log/graylog-server/server.log  | sed "s/.*admin:\(.*\)@.*/https:\/\/admin:\1@$(hostname -f)/" | tail -n1
-    echo "Then use following credentials to login your brand new single node graylog:"
-    echo "Username: admin"
-    echo "Password: {{ graylog_admin_password }}"
-    echo 
-    echo "Graylog Server Memory: {{graylog_server_memory_gb}} GB"
-    echo "Graylog Dataserver Memory: {{graylog_dataserver_memory_gb}} GB"
-    echo "Mongodb Memory: {{graylog_mongodb_memory_gb}} GB"
-    echo "Remember to fix SELinux rules after initial setup!"
+  ansible.builtin.shell:
+    cmd: |
+      for i in $(seq 10)
+      do
+        grep -q admin: /var/log/graylog-server/server.log && break
+        sleep 6
+      done
+      echo "Setup finished, now use this link to generate certificates:"
+      grep admin: /var/log/graylog-server/server.log  | sed "s/.*admin:\(.*\)@.*/https:\/\/admin:\1@$(hostname -f)/" | tail -n1
+      echo "Then use following credentials to login your brand new single node graylog:"
+      echo "Username: admin"
+      echo "Password: {{ graylog_admin_password }}"
+      echo 
+      echo "Graylog Server Memory: {{graylog_server_memory_gb}} GB"
+      echo "Graylog Dataserver Memory: {{graylog_dataserver_memory_gb}} GB"
+      echo "Mongodb Memory: {{graylog_mongodb_memory_gb}} GB"
+      echo "Remember to fix SELinux rules after initial setup!"
   register: finish
+
 - name: print finishing message
-  debug:
+  ansible.builtin.debug:
     var: finish.stdout_lines
 

@@ -1,5 +1,5 @@
 ---
 - name: Install graylog packages
-  dnf:
+  ansible.builtin.dnf:
     name: "{{ graylog_packages }}"
 ...

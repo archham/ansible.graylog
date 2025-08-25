@@ -1,6 +1,6 @@
 ---
 - name: Add configuration to disable diagnostic data collection
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: /etc/mongod.conf
     block: |
       setParameter:

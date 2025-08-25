@@ -4,7 +4,7 @@
     manager: auto
 
 - name: reconfigure graylog if needed
-  fail:
+  ansible.builtin.fail:
     msg:
       - "ERROR: Found graylog installation"
       - "This role is writte for setting up graylog, not for reconfiguring"

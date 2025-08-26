@@ -41,7 +41,6 @@ graylog_transport_email_use_tls: false
 graylog_transport_email_use_ssl: false
 graylog_transport_email_auth_username: "you@example.com"
 graylog_transport_email_auth_password:  "secret"
-graylog_transport_email_subject_prefix: "[graylog]"
 graylog_transport_email_from_email: "graylog@example.com"
 
 # --- MEMORY SETTINGS ---

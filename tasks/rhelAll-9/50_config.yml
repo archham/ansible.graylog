@@ -68,14 +68,6 @@
   notify:
   - restart graylog-server
 
-- name: Configure Graylog root email
-  ansible.builtin.lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^root_email'
-    line: 'root_email = {{ graylog_root_email }}'
-  notify:
-  - restart graylog-server
-
 - name: Configure Graylog http_enable_gzip
   ansible.builtin.lineinfile:
     path: /etc/graylog/server/server.conf
@@ -153,14 +145,6 @@
     path: /etc/graylog/server/server.conf
     regexp: '^transport_email_auth_password'
     line: 'transport_email_auth_password = {{ graylog_transport_email_auth_password }}'
-  notify:
-  - restart graylog-server
-
-- name: Configure Graylog transport_email_subject_prefix
-  ansible.builtin.lineinfile:
-    path: /etc/graylog/server/server.conf
-    regexp: '^transport_email_subject_prefix'
-    line: 'transport_email_subject_prefix = {{ graylog_transport_email_subject_prefix }}'
   notify:
   - restart graylog-server
 

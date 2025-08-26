@@ -8,7 +8,7 @@ Installation with ansible-galaxy:
 ansible-galaxy install joe-speedboat.graylog
 ```
 
-## Requirements xxx
+## Requirements
 
 * Currently tested with Rocky Linux 9
 * Ansible 2.18 or higher is required for this Ansible Role
